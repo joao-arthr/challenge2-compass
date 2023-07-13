@@ -11,14 +11,14 @@ import br.com.compass.challenge2.repositories.ProductRepository;
 @Service
 public class ProductService {
 
-	private final ProductRepository productRepository;
-	
-	@Autowired
-	public ProductService(ProductRepository productRepository) {
-		this.productRepository = productRepository;
-	}
-	
-	public List<Product> getAllProducts() {
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 

@@ -69,4 +69,6 @@ public class ProductController {
 	private Product convertToEntity(ProductDTO productDTO) {
 		return new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getQuantity());
 	}
+
 }
+

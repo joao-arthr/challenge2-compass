@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Positive;
 public class ProductDTO {
 
 	private int id;
-
 	@NotEmpty(message = "Name is required")
 	private String name;
 	@Positive(message = "Price must be a positive number")
@@ -25,7 +24,6 @@ public class ProductDTO {
 	public int getId() {
 		return id;
 	}
-
 
 	public void setId(int id) {
 		this.id = id;
