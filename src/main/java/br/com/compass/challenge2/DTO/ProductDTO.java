@@ -5,18 +5,17 @@ import jakarta.validation.constraints.Positive;
 
 public class ProductDTO {
 
-	private int id;
+	private Long id;
 	
 	@NotEmpty(message = "Name is required")
 	private String name;
-	
 	@Positive(message = "Price must be a positive number")
 	private double price;
 
 	@NotEmpty(message = "Quantity is required")
 	private int quantity;
 
-	public ProductDTO(int id, String name, double price, int quantity) {
+	public ProductDTO(Long id, String name, double price, int quantity) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -24,11 +23,11 @@ public class ProductDTO {
 		this.quantity = quantity;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
