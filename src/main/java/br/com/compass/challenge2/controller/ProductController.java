@@ -23,41 +23,41 @@ import jakarta.validation.Valid;
 public class ProductController {
 
 	private final ProductService productService;
-	
-	 @Autowired
+
+	@Autowired
 	public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-	 
-	 @GetMapping
-	 public ResponseEntity<List<ProductDTO>> getAllProducts(){
-		 List<Product> products = productService.getAllProducts();
-		 List<ProductDTO> productDTOs = products.stream()
-				 .map(this::convertToDTO)
-				 .collect(Collectors.toList());
-		 return ResponseEntity.ok(productDTOs);
-	 }
-	 
-	 @PutMapping("/{id}")
-	    public ResponseEntity<ProductDTO> updateProduct(
-	            @PathVariable Long id,
-	            @Valid @RequestBody ProductDTO productDTO) {
-	        Product product = convertToEntity(productDTO);
-	        Product updatedProduct = productService.updateProduct(id, product);
-	        return ResponseEntity.ok(convertToDTO(updatedProduct));
-	    }
+		this.productService = productService;
+	}
 
-	    @DeleteMapping("/{id}")
-	    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-	        productService.deleteProduct(id);
-	        return ResponseEntity.noContent().build();
-	    }
+	@GetMapping
+	public ResponseEntity<List<ProductDTO>> getAllProducts(){
+		List<Product> products = productService.getAllProducts();
+		List<ProductDTO> productDTOs = products.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+		return ResponseEntity.ok(productDTOs);
+	}
 
-	    private ProductDTO convertToDTO(Product product) {
-	        return new ProductDTO(product.getId(), product.getName(), product.getPrice());
-	    }
+	@PutMapping("/{id}")
+	public ResponseEntity<ProductDTO> updateProduct(
+			@PathVariable Long id,
+			@Valid @RequestBody ProductDTO productDTO) {
+		Product product = convertToEntity(productDTO);
+		Product updatedProduct = productService.updateProduct(id, product);
+		return ResponseEntity.ok(convertToDTO(updatedProduct));
+	}
 
-	    private Product convertToEntity(ProductDTO productDTO) {
-	        return new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice());
-	    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+		productService.deleteProduct(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	private ProductDTO convertToDTO(Product product) {
+		return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
+	}
+
+	private Product convertToEntity(ProductDTO productDTO) {
+		return new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getQuantity());
+	}
 }

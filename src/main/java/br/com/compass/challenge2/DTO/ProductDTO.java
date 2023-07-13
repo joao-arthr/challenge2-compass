@@ -12,11 +12,15 @@ public class ProductDTO {
 	@Positive(message = "Price must be a positive number")
 	private double price;
 
-	public ProductDTO(Long id, String name, double price) {
+	@NotEmpty(message = "Quantity is required")
+	private int quantity;
+
+	public ProductDTO(Long id, String name, double price, int quantity) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.price = price;
+		this.quantity = quantity;
 	}
 
 	public Long getId() {
@@ -42,6 +46,13 @@ public class ProductDTO {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
-	
+
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 }
