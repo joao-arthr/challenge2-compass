@@ -10,7 +10,6 @@ public class ProductDTO {
 	private String name;
 	@Positive(message = "Price must be a positive number")
 	private double price;
-	@NotEmpty(message = "Quantity is required")
 	private int quantity;
 
 	public ProductDTO(int id, String name, double price, int quantity) {
