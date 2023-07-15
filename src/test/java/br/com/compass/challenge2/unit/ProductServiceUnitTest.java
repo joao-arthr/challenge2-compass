@@ -28,7 +28,7 @@ class ProductServiceUnitTest {
 
     @Test
     @DisplayName("Get all products")
-    void getAllProducts_ReturnsListOfProducts() {
+    void getAllProducts() {
 
         List<Product> expectedProducts = Arrays.asList(
                 new Product(1, "Product 1", 10.0, 5),
@@ -45,7 +45,7 @@ class ProductServiceUnitTest {
 
     @Test
     @DisplayName("Get product by ID")
-    void getProductById_ValidId_ReturnsProduct() {
+    void getProductById() {
 
         int productId = 1;
         Product expectedProduct = new Product(productId, "Product 1", 10.0, 5);
@@ -59,7 +59,7 @@ class ProductServiceUnitTest {
     }
 
     @Test
-    void getProductById_InvalidId_ThrowsRuntimeException() {
+    void getProductByIdException() {
         int productId = 1;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
@@ -68,7 +68,7 @@ class ProductServiceUnitTest {
 
     @Test
     @DisplayName("Create product")
-    void createProduct_ValidProduct_ReturnsCreatedProduct() {
+    void createProduct() {
         Product productToCreate = new Product(1, "Product 1", 10.0, 5);
         Product expectedCreatedProduct = new Product(1, "Product 1", 10.0, 5);
         when(productRepository.save(productToCreate)).thenReturn(expectedCreatedProduct);
@@ -80,7 +80,7 @@ class ProductServiceUnitTest {
 
     @Test
     @DisplayName("Update product")
-    void updateProduct_ValidProduct_ReturnsUpdatedProduct() {
+    void updateProduct() {
         int productId = 1;
         Product productToUpdate = new Product(productId, "Product 1", 10.0, 5);
         Product expectedUpdatedProduct = new Product(productId, "Updated Product", 15.0, 7);
@@ -93,7 +93,7 @@ class ProductServiceUnitTest {
     }
 
     @Test
-    void updateProduct_InvalidId_ThrowsRuntimeException() {
+    void updateProductException() {
         int productId = 1;
         Product productToUpdate = new Product(productId, "Product 1", 10.0, 5);
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
@@ -103,7 +103,7 @@ class ProductServiceUnitTest {
 
     @Test
     @DisplayName("Delete product by ID")
-    void deleteProduct_ValidId_DeletesProduct() {
+    void deleteProduct() {
         int productId = 1;
         Product product = new Product(productId, "Product 1", 10.0, 5);
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));

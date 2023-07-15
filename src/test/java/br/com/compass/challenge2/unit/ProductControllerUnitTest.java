@@ -32,7 +32,7 @@ class ProductControllerUnitTest {
     private ProductController productController;
 
     @Test
-    void getAllProducts_ReturnsListOfProductDTOs() {
+    void getAllProducts() {
         List<Product> products = Arrays.asList(
                 new Product(1, "Product 1", 10.0, 5),
                 new Product(2, "Product 2", 20.0, 10)
@@ -46,7 +46,7 @@ class ProductControllerUnitTest {
     }
 
     @Test
-    void getProductById_ValidId_ReturnsProductDTO() {
+    void getProductById() {
         int productId = 1;
         Product product = new Product(productId, "Product 1", 10.0, 5);
         when(productService.getProductById(productId)).thenReturn(product);
@@ -58,7 +58,7 @@ class ProductControllerUnitTest {
     }
 
     @Test
-    void createProduct_ValidProductDTO_ReturnsCreatedProductDTO() {
+    void createProduct() {
         ProductDTO productDTO = new ProductDTO(1, "Product 1", 10.0, 5);
         Product product = new Product(1, "Product 1", 10.0, 5);
         when(productService.createProduct(any(Product.class))).thenReturn(product);
@@ -70,7 +70,7 @@ class ProductControllerUnitTest {
     }
 
     @Test
-    void updateProduct_ValidIdAndProductDTO_ReturnsUpdatedProductDTO() {
+    void updateProduct() {
         int productId = 1;
         ProductDTO productDTO = new ProductDTO(productId, "Product 1", 15.0, 7);
         Product product = new Product(productId, "Product 1", 15.0, 7);
@@ -85,7 +85,7 @@ class ProductControllerUnitTest {
     }
 
     @Test
-    void deleteProduct_ValidId_ReturnsNoContent() {
+    void deleteProduct() {
         int productId = 1;
 
         ResponseEntity<Void> responseEntity = productController.deleteProduct(productId);
