@@ -26,8 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Import(TestConfig.class)
 @Transactional
-public class ProductControllerIntegrationTest {
-
+public class ProductControllerGetTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -54,7 +53,6 @@ public class ProductControllerIntegrationTest {
         productRepository.deleteAll();
     }
 
-
     @Test
     @DisplayName("Get all products")
     public void testGetAllProductsSuccess() throws Exception {
@@ -79,21 +77,27 @@ public class ProductControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Post product")
-    public void testCreateProductSuccess() throws Exception {
-        Product product1 = new Product();
-        product1.setId(2);
-        product1.setName("New Product");
-        product1.setPrice(20.0);
-        product1.setQuantity(10);
+    @DisplayName("Get product by ID - Not Numeric ID")
+    public void testGetProductByIdNotNumericId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", "abc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 
-        var json = objectMapper.writeValueAsString(product1);
+    @Test
+    @DisplayName("Get product by ID - Negative ID")
+    public void testGetProductByIdNegativeId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", -1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    @Test
+    @DisplayName("Get product by ID - Not Found")
+    public void testGetProductByIdNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", 9999)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 }
