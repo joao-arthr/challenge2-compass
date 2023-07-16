@@ -1,8 +1,11 @@
 package br.com.compass.challenge2.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.com.compass.challenge2.exception.InvalidIdException;
+import br.com.compass.challenge2.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.compass.challenge2.DTO.ProductDTO;
 import br.com.compass.challenge2.model.Product;
@@ -41,18 +45,34 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable int id) {
-        Product product = productService.getProductById(id);
-        ProductDTO productDTO = convertToDTO(product);
-        return ResponseEntity.ok(productDTO);
-    }
-	
+	public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) {
+	    try {
+			int productId = Integer.parseInt(String.valueOf(id));
+			if (productId <= 0) {
+				throw new InvalidIdException("Invalid ID: " + id);
+			}
+
+	        Product product = productService.getProductById(productId);
+	        ProductDTO productDTO = convertToDTO(product);
+
+	        return ResponseEntity.ok(productDTO);
+	    }  catch (NumberFormatException ex) {
+			return ResponseEntity.badRequest().build();
+		}  catch (ProductNotFoundException ex) {
+	        return ResponseEntity.notFound().build();
+	    }
+	}
+
 	@PostMapping
 	public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
 	    Product product = new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getQuantity());
 	    Product savedProduct = productService.createProduct(product);
 	    ProductDTO savedProductDTO = new ProductDTO(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice(), savedProduct.getQuantity());
-	    return ResponseEntity.ok(convertToDTO(savedProduct));
+	    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+	            .path("/{id}")
+	            .buildAndExpand(savedProduct.getId())
+	            .toUri();
+	    return ResponseEntity.created(location).body(convertToDTO(savedProduct));
 	}
 
 	@PutMapping("/{id}")
