@@ -2,6 +2,7 @@ package br.com.compass.challenge2.service;
 
 import java.util.List;
 
+import br.com.compass.challenge2.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class ProductService {
 
     public Product getProductById(int id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
     public Product createProduct(Product product) {
