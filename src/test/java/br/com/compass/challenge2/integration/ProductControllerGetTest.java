@@ -1,32 +1,30 @@
 package br.com.compass.challenge2.integration;
 
-import br.com.compass.challenge2.DTO.ProductDTO;
+import br.com.compass.challenge2.integration.util.TestConfig;
 import br.com.compass.challenge2.model.Product;
 import br.com.compass.challenge2.repositories.ProductRepository;
 import br.com.compass.challenge2.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.Matchers.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestConfig.class)
 @Transactional
 public class ProductControllerIntegrationTest {
 
@@ -39,15 +37,16 @@ public class ProductControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private Product product;
+
+    @MockBean
+    private ProductService productService;
+
 
     @BeforeEach
     public void up(){
-        Product product1 = new Product();
-        product1.setId(1);
-        product1.setName("Product 1");
-        product1.setPrice(10.0);
-        product1.setQuantity(5);
-        productRepository.save(product1);
+        productRepository.save(product);
     }
 
     @AfterEach
@@ -58,7 +57,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     @DisplayName("Get all products")
-    public void testGetAllProducts() throws Exception {
+    public void testGetAllProductsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/products")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -66,15 +65,29 @@ public class ProductControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Get product by ID")
+    public void testGetProductByIdSuccess() throws Exception {
+        when(productService.getProductById(anyInt())).thenReturn(product);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", product.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(product.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(product.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(product.getPrice()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(product.getQuantity()));
+    }
+
+    @Test
     @DisplayName("Post product")
-    public void testCreateProduct() throws Exception {
+    public void testCreateProductSuccess() throws Exception {
+        Product product1 = new Product();
+        product1.setId(2);
+        product1.setName("New Product");
+        product1.setPrice(20.0);
+        product1.setQuantity(10);
 
-        Product product = new Product();
-        product.setName("New Product");
-        product.setPrice(20.0);
-        product.setQuantity(10);
-
-        var json = objectMapper.writeValueAsString(product);
+        var json = objectMapper.writeValueAsString(product1);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
                         .contentType(MediaType.APPLICATION_JSON)

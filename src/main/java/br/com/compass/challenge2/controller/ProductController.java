@@ -56,9 +56,9 @@ public class ProductController {
 	        ProductDTO productDTO = convertToDTO(product);
 
 	        return ResponseEntity.ok(productDTO);
-	    }  catch (NumberFormatException ex) {
+	    }  catch (NumberFormatException | InvalidIdException ex) {
 			return ResponseEntity.badRequest().build();
-		}  catch (ProductNotFoundException ex) {
+		} catch (ProductNotFoundException ex) {
 	        return ResponseEntity.notFound().build();
 	    }
 	}
@@ -91,6 +91,9 @@ public class ProductController {
 	}
 
 	private ProductDTO convertToDTO(Product product) {
+		if (product == null) {
+			throw new ProductNotFoundException("Product not found");
+		}
 		return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
 	}
 
