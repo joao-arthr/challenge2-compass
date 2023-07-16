@@ -20,6 +20,7 @@ public class ProductDTO {
 		this.quantity = quantity;
 	}
 
+
 	public int getId() {
 		return id;
 	}
