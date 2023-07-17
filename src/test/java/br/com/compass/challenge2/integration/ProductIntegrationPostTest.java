@@ -1,23 +1,30 @@
 package br.com.compass.challenge2.integration;
 
+import br.com.compass.challenge2.integration.util.TestConfig;
 import br.com.compass.challenge2.model.Product;
 import br.com.compass.challenge2.repositories.ProductRepository;
 import br.com.compass.challenge2.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-
-public class ProductControllerPostTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+@Import(TestConfig.class)
+@Transactional
+public class ProductIntegrationPostTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,29 +38,29 @@ public class ProductControllerPostTest {
     @Autowired
     private Product product;
 
-    @MockBean
+    @Mock
     private ProductService productService;
 
-    @AfterEach
-    public void down(){
+    @BeforeEach
+    public void setup() {
         productRepository.deleteAll();
     }
 
+
     @Test
-    @DisplayName("Post product")
+    @DisplayName("Post product successful")
     public void testCreateProductSuccess() throws Exception {
-        Product product1 = new Product();
-        product1.setId(2);
-        product1.setName("New Product");
-        product1.setPrice(20.0);
-        product1.setQuantity(10);
+        // Prepare the request body
+        Product product = new Product(2,"Example Product", 10.0, 100);
 
-        var json = objectMapper.writeValueAsString(product1);
-
+        // Perform the POST request
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(objectMapper.writeValueAsString(product)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(product.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(product.getPrice()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(product.getQuantity()));
     }
 }

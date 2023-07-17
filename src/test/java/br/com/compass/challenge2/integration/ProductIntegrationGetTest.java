@@ -6,6 +6,7 @@ import br.com.compass.challenge2.repositories.ProductRepository;
 import br.com.compass.challenge2.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Import(TestConfig.class)
 @Transactional
-public class ProductControllerGetTest {
+public class ProductIntegrationGetTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -39,7 +40,7 @@ public class ProductControllerGetTest {
     @Autowired
     private Product product;
 
-    @MockBean
+    @Mock
     private ProductService productService;
 
 
@@ -77,8 +78,8 @@ public class ProductControllerGetTest {
     }
 
     @Test
-    @DisplayName("Get product by ID - Not Numeric ID")
-    public void testGetProductByIdNotNumericId() throws Exception {
+    @DisplayName("Get product by ID - Non Numeric ID")
+    public void testGetProductByIdNonNumericId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", "abc")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());

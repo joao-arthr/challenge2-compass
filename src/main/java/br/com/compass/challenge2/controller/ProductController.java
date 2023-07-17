@@ -48,9 +48,7 @@ public class ProductController {
 	public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) {
 	    try {
 			int productId = Integer.parseInt(String.valueOf(id));
-			if (productId <= 0) {
-				throw new InvalidIdException("Invalid ID: " + id);
-			}
+			isPositiveId(productId);
 
 	        Product product = productService.getProductById(productId);
 	        ProductDTO productDTO = convertToDTO(product);
@@ -77,11 +75,21 @@ public class ProductController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<ProductDTO> updateProduct(
-			@PathVariable int id,
+			@PathVariable String id,
 			@Valid @RequestBody ProductDTO productDTO) {
-		Product product = convertToEntity(productDTO);
-		Product updatedProduct = productService.updateProduct(id, product);
-		return ResponseEntity.ok(convertToDTO(updatedProduct));
+		try{
+			int productId = Integer.parseInt(String.valueOf(id));
+			isPositiveId(productId);
+
+			Product product = convertToEntity(productDTO);
+			Product updatedProduct = productService.updateProduct(productId, product);
+			return ResponseEntity.ok(convertToDTO(updatedProduct));
+		} catch (NumberFormatException | InvalidIdException ex) {
+			return ResponseEntity.badRequest().build();
+		} catch (ProductNotFoundException ex) {
+			return ResponseEntity.notFound().build();
+		}
+
 	}
 
 	@DeleteMapping("/{id}")
@@ -99,6 +107,12 @@ public class ProductController {
 
 	private Product convertToEntity(ProductDTO productDTO) {
 		return new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getQuantity());
+	}
+
+	private void isPositiveId(int id){
+		if (id <= 0) {
+			throw new InvalidIdException("Invalid ID: " + id);
+		}
 	}
 
 }
