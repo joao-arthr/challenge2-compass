@@ -19,8 +19,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -92,6 +93,17 @@ public class ProductIntegrationPutTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"Updated Product\", \"price\": 9.99, \"quantity\": 10}"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Update with invalid input")
+    public void testUpdateProductWithInvalidInput() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/products/{id}", product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"aaa\", \"quantity\": aaa}"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+        verify(productService, never()).updateProduct(anyInt(), any(Product.class));
     }
 
 

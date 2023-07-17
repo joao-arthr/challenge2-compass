@@ -8,6 +8,7 @@ import br.com.compass.challenge2.exception.InvalidIdException;
 import br.com.compass.challenge2.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -89,7 +90,6 @@ public class ProductController {
 		} catch (ProductNotFoundException ex) {
 			return ResponseEntity.notFound().build();
 		}
-
 	}
 
 	@DeleteMapping("/{id}")
