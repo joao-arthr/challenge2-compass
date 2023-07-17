@@ -63,14 +63,14 @@ public class ProductController {
 
 	@PostMapping
 	public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
-	    Product product = new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getQuantity());
-	    Product savedProduct = productService.createProduct(product);
-	    ProductDTO savedProductDTO = new ProductDTO(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice(), savedProduct.getQuantity());
-	    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-	            .path("/{id}")
-	            .buildAndExpand(savedProduct.getId())
-	            .toUri();
-	    return ResponseEntity.created(location).body(convertToDTO(savedProduct));
+		Product product = new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getQuantity());
+		Product savedProduct = productService.createProduct(product);
+		ProductDTO savedProductDTO = new ProductDTO(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice(), savedProduct.getQuantity());
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}")
+				.buildAndExpand(savedProduct.getId())
+				.toUri();
+		return ResponseEntity.created(location).body(convertToDTO(savedProduct));
 	}
 
 	@PutMapping("/{id}")
@@ -94,8 +94,18 @@ public class ProductController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
-		productService.deleteProduct(id);
-		return ResponseEntity.noContent().build();
+		try{
+			int productId = Integer.parseInt(String.valueOf(id));
+			isPositiveId(productId);
+
+			productService.deleteProduct(id);
+			return ResponseEntity.noContent().build();
+		} catch (NumberFormatException | InvalidIdException ex) {
+			return ResponseEntity.badRequest().build();
+		} catch (ProductNotFoundException ex) {
+			return ResponseEntity.notFound().build();
+		}
+
 	}
 
 	private ProductDTO convertToDTO(Product product) {

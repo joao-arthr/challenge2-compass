@@ -77,6 +77,7 @@ public class ProductIntegrationPutTest {
     }
 
     @Test
+    @DisplayName("Update with non numeric ID")
     public void testUpdateProductWithNonNumericId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/products/{id}",  "a")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,6 +86,7 @@ public class ProductIntegrationPutTest {
     }
 
     @Test
+    @DisplayName("Update with negative ID")
     public void testUpdateProductWithNegativeId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/products/{id}",  -9999)
                         .contentType(MediaType.APPLICATION_JSON)
