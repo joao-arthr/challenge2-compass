@@ -3,16 +3,13 @@ package br.com.compass.challenge2.integration;
 import br.com.compass.challenge2.integration.util.TestConfig;
 import br.com.compass.challenge2.model.Product;
 import br.com.compass.challenge2.repositories.ProductRepository;
-import br.com.compass.challenge2.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,12 +32,6 @@ public class ProductIntegrationPostTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private Product product;
-
-    @Mock
-    private ProductService productService;
-
     @BeforeEach
     public void setup() {
         productRepository.deleteAll();
@@ -50,10 +41,8 @@ public class ProductIntegrationPostTest {
     @Test
     @DisplayName("Post product successful")
     public void testCreateProductSuccess() throws Exception {
-        // Prepare the request body
         Product product = new Product(2,"Example Product", 10.0, 100);
 
-        // Perform the POST request
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(product)))

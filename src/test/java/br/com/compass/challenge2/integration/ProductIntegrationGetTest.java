@@ -4,13 +4,11 @@ import br.com.compass.challenge2.integration.util.TestConfig;
 import br.com.compass.challenge2.model.Product;
 import br.com.compass.challenge2.repositories.ProductRepository;
 import br.com.compass.challenge2.service.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,9 +31,6 @@ public class ProductIntegrationGetTest {
 
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private Product product;
